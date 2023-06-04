@@ -1,7 +1,8 @@
 import pandas as pd
+import numpy as np
 from utils import scale_data, count_metrics
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
 def main():
     data = pd.read_csv('flowers.csv')
@@ -16,7 +17,7 @@ def main():
 
     X_train, X_test = scale_data(X_train, X_test)
 
-    classifier = LogisticRegression(max_iter=1000) # иначе Warning
+    classifier = RandomForestClassifier()
     classifier.fit(X_train, y_train)
     y_pred = classifier.predict(X_test)
 
@@ -24,14 +25,14 @@ def main():
     metrics = count_metrics(y_test, y_pred)
 
     print('\nПоиск оптимальных параметров с помощью GridSearch')
-    params = {'C': [0.01, 0.1, 1.0, 10], 'solver': ['sag', 'saga', 'newton-cg', 'lbfgs']}
-    logist_grid = GridSearchCV(classifier, params, cv=5, n_jobs=-1, verbose=True)
-    logist_grid.fit(X_train, y_train)
-    print('Оптимальные параметры:', logist_grid.best_params_)
-    print('Лучшая accuracy по сетке параметров:', logist_grid.best_score_)
+    params = {'n_estimators': [50, 75, 100, 125], 'max_depth': range(1, 11)}
+    forest_grid = GridSearchCV(classifier, params, cv=5, n_jobs=-1, verbose=True)
+    forest_grid.fit(X_train, y_train)
+    print('Оптимальные параметры:', forest_grid.best_params_)
+    print('Лучшая accuracy по сетке параметров:', forest_grid.best_score_)
 
     print('\nПодсчёт метрик на тестовой выборке с оптимальной моделью')
-    metrics = count_metrics(y_test, logist_grid.predict(X_test))
+    metrics = count_metrics(y_test, forest_grid.predict(X_test))
 
 if __name__=='__main__':
     main()

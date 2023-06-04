@@ -10,7 +10,7 @@ def main():
     features = list(data.columns.drop('Class'))
     target = 'Class'
 
-    X_train, X_test, y_train, y_test = train_test_split(data[features], data[target], shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(data[features], data[target], stratify=data[target])
     print(f'Обучающая выборка: {X_train.shape[0]} наблюдений')
     print(f'Тестовая выборка: {X_test.shape[0]} наблюдений\n')
 
@@ -24,7 +24,7 @@ def main():
     metrics = count_metrics(y_test, y_pred)
 
     print('\nПоиск оптимальных параметров с помощью GridSearch')
-    params = {'criterion': ['gini', 'entropy', 'log_loss'], 'max_depth': range(1, 11)}
+    params = {'max_features': ['sqrt', 'log2'], 'max_depth': range(1, 11)}
     tree_grid = GridSearchCV(classifier, params, cv=5, n_jobs=-1, verbose=True)
     tree_grid.fit(X_train, y_train)
     print('Оптимальные параметры:', tree_grid.best_params_)

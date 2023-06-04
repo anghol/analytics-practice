@@ -1,6 +1,9 @@
 import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
+from typing import Union
 
 def scale_data(X_train, X_test):
     scaler = StandardScaler()
@@ -24,3 +27,27 @@ def count_metrics(y_true, y_pred, multiclass=True, print_metrics=True):
         print('confusion_matrix:\n', conf_matrix)
     
     return metrics
+
+def plot_loss_curve(loss_curve):
+    plt.figure()
+    plt.plot(loss_curve)
+    plt.xlabel('epoch')
+    plt.ylabel('loss')
+
+def logging(name_model: str, metrics_default_model: dict, metrics_optim_model: Union[dict, None] = None, optim_params=None):
+    with open('log.txt', 'a') as log_file:
+        log_file.write(f'----- {name_model} -----\n')
+
+        log_file.write('Metrics on default model\n')
+        for (k, v) in metrics_default_model.items():
+            log_file.write(f'{k}: {v}\n')
+        log_file.write('\n')
+        
+        if metrics_optim_model:
+            log_file.write('Metrics on optimal model\n')
+            for (k, v) in metrics_optim_model.items():
+                log_file.write(f'{k}: {v}\n')
+            log_file.write('\n')
+        
+        if optim_params:
+            log_file.write(f'Optimal parameters: {optim_params}\n\n')

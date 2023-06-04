@@ -12,7 +12,7 @@ def main():
     features = list(data.columns.drop('Class'))
     target = 'Class'
 
-    X_train, X_test, y_train, y_test = train_test_split(data[features], data[target], shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(data[features], data[target], stratify=data[target])
     print(f'Обучающая выборка: {X_train.shape[0]} наблюдений')
     print(f'Тестовая выборка: {X_test.shape[0]} наблюдений\n')
 
